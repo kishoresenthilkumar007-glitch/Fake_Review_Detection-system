@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botshield AI - Fake Review Detector</title>
+    <meta name="description"
+        content="An advanced AI-powered platform to analyze hotel and product reviews, detecting deceptive and truthful text using machine learning models.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js CDN for 3D Background animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="workspace-loading">
+    <!-- Premium Loader Page -->
+    <div id="loader-wrapper">
+        <!-- Concentric 3D Portal Rings for Dive Deep Zoom animation -->
+        <div class="portal-ring ring-outer"></div>
+        <div class="portal-ring ring-middle"></div>
+        <div class="portal-ring ring-inner"></div>
+
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i data-lucide="shield" class="loader-shield-icon"></i>
+                <div class="loader-pulse"></div>
+            </div>
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-text">Initializing Workspace...</div>
+        </div>
+    </div>
+
+    <!-- Floating Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <i data-lucide="menu"></i>
+    </button>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-menu-drawer" id="mobile-menu-drawer">
+        <div class="drawer-header">
+            <span class="logo-text">Botshield <span class="accent-text">AI</span></span>
+            <button class="close-drawer-btn" onclick="toggleMobileMenu()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <nav class="drawer-nav">
+            <button class="drawer-nav-item active" id="mobile-nav-single" onclick="handleMobileNav('single')">
+                <i data-lucide="file-text"></i> Single Analysis
+            </button>
+            <button class="drawer-nav-item" id="mobile-nav-batch" onclick="handleMobileNav('batch')">
+                <i data-lucide="files"></i> Batch File Upload
+            </button>
+        </nav>
+        <div class="drawer-footer">
+            <p>&copy; 2026 Botshield AI</p>
+        </div>
+    </div>
+    <div class="drawer-overlay" id="drawer-overlay" onclick="toggleMobileMenu()"></div>
+
+
+    <!-- Animated Background -->
+    <div class="background-decor">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+        <div id="three-canvas-container"></div>
+    </div>
+
+    <!-- Noise Grain Overlay -->
+    <div class="noise-overlay"></div>
+
+    <header class="anim-entrance" style="--entrance-delay: 0s">
+        <div class="header-container">
+            <div class="logo-3d-wrapper">
+                <div class="logo-3d-shield">
+                    <i data-lucide="shield-check" class="logo-icon"></i>
+                </div>
+                <div class="logo-glow-ring"></div>
+            </div>
+            <span class="logo-text">Botshield <span class="accent-text">AI</span></span>
+            <p class="tagline">
+                <span class="tagline-word" style="--word-delay: 0.3s">Advanced</span>
+                <span class="tagline-word" style="--word-delay: 0.4s">Fake</span>
+                <span class="tagline-word" style="--word-delay: 0.5s">Review</span>
+                <span class="tagline-word" style="--word-delay: 0.6s">Detection</span>
+                <span class="tagline-word" style="--word-delay: 0.7s">Engine</span>
+            </p>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Tabs Navigation -->
+        <div class="tabs-nav anim-entrance" style="--entrance-delay: 0.15s">
+            <button class="tab-btn active" id="tab-single" onclick="switchTab('single')">
+                <i data-lucide="file-text"></i> Single Analysis
+            </button>
+            <button class="tab-btn" id="tab-batch" onclick="switchTab('batch')">
+                <i data-lucide="files"></i> Batch File Upload
+            </button>
+            <div class="tab-indicator" id="tab-indicator"></div>
+        </div>
+
+        <!-- TAB CONTENT: SINGLE REVIEW -->
+        <section class="tab-content active" id="content-single">
+            <div class="glass-card tilt-card anim-entrance" style="--entrance-delay: 0.3s">
+                <div class="card-shimmer"></div>
+                <div class="card-header">
+                    <h2><span class="gradient-text">Analyze a Single Review</span></h2>
+                    <p class="card-subtitle">Paste any review text below to instantly evaluate its authenticity.</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="review-input">Review Text</label>
+                    <div class="textarea-glow-wrap">
+                        <textarea id="review-input"
+                            placeholder="Type or paste the review content here (e.g. 'We stayed at this hotel last weekend...')"
+                            rows="8"></textarea>
+                    </div>
+                    <div class="textarea-footer">
+                        <span id="char-counter" class="counter-badge">0 characters</span>
+                        <button class="clear-btn" id="btn-clear" onclick="clearSingleInput()">
+                            <i data-lucide="trash-2"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="primary-btn glow-btn" id="btn-analyze-single" onclick="analyzeSingleReview()">
+                        <span class="btn-text">Analyze Review</span>
+                        <i data-lucide="zap" class="btn-icon"></i>
+                        <span class="loader hidden"></span>
+                        <span class="btn-shine"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scanning Overlay (Hidden) -->
+            <div class="scan-overlay hidden" id="scan-overlay">
+                <div class="scan-content">
+                    <div class="scan-ring">
+                        <div class="scan-ring-inner"></div>
+                        <i data-lucide="search" class="scan-icon"></i>
+                    </div>
+                    <p class="scan-text">Analyzing review with AI model...</p>
+                    <div class="scan-bar">
+                        <div class="scan-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Placeholder Card (Shown Initially) -->
+            <div class="glass-card placeholder-card anim-entrance" id="single-placeholder" style="--entrance-delay: 0.45s">
+                <div class="placeholder-content">
+                    <div class="placeholder-icon-wrap">
+                        <i data-lucide="cpu" class="placeholder-icon"></i>
+                    </div>
+                    <h3>Auditing System Idle</h3>
+                    <p>Awaiting review text input. Enter or paste a review in the input card on the left and trigger "Analyze Review" to begin the classification scan.</p>
+                </div>
+            </div>
+
+            <!-- Single Result Card (Hidden Initially) -->
+            <div class="glass-card result-card hidden" id="single-result">
+                <div class="card-shimmer"></div>
+                <div class="result-header">
+                    <h3>Analysis Result</h3>
+                    <button class="close-result" onclick="hideSingleResult()">&times;</button>
+                </div>
+
+                <div class="result-body">
+                    <div class="verdict-section">
+                        <div class="verdict-3d-container">
+                            <div class="verdict-badge" id="verdict-badge">
+                                <i id="verdict-icon" data-lucide="alert-triangle"></i>
+                                <span id="verdict-label">DECEPTIVE</span>
+                            </div>
+                        </div>
+                        <div class="confidence-gauge-container">
+                            <div class="gauge-label">Confidence Score</div>
+                            <div class="circular-gauge" id="circular-gauge">
+                                <svg viewBox="0 0 120 120">
+                                    <circle class="gauge-bg-circle" cx="60" cy="60" r="50"></circle>
+                                    <circle class="gauge-fill-circle" id="gauge-fill-circle" cx="60" cy="60" r="50"></circle>
+                                </svg>
+                                <div class="gauge-center-value" id="verdict-confidence-text">85.6%</div>
+                            </div>
+                            <!-- Hidden bar kept for backward compat -->
+                            <div class="progress-bar-bg" style="display:none">
+                                <div class="progress-bar-fill" id="verdict-confidence-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="details-section">
+                        <h4>Analysis Breakdown</h4>
+                        <div class="breakdown-grid">
+                            <div class="breakdown-item glow-border-card">
+                                <div class="item-icon truthful-icon">
+                                    <i data-lucide="shield-check"></i>
+                                </div>
+                                <div class="item-title">Truthful Probability</div>
+                                <div class="item-value" id="prob-truthful">14.4%</div>
+                            </div>
+                            <div class="breakdown-item glow-border-card">
+                                <div class="item-icon deceptive-icon">
+                                    <i data-lucide="shield-alert"></i>
+                                </div>
+                                <div class="item-title">Deceptive Probability</div>
+                                <div class="item-value" id="prob-deceptive">85.6%</div>
+                            </div>
+                        </div>
+                        <div class="review-quote-box">
+                            <i data-lucide="quote" class="quote-icon"></i>
+                            <p class="quote-text" id="quote-preview"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT: BATCH UPLOAD -->
+        <section class="tab-content" id="content-batch">
+            <div class="glass-card tilt-card anim-entrance" style="--entrance-delay: 0.3s">
+                <div class="card-shimmer"></div>
+                <div class="card-header">
+                    <h2><span class="gradient-text">Bulk Dataset Analysis</span></h2>
+                    <p class="card-subtitle">Upload CSV or Excel files containing reviews to inspect and process them in
+                        bulk.</p>
+                </div>
+
+                <div class="upload-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept=".csv, .xlsx, .xls" class="hidden-file-input"
+                        onchange="handleFileSelect(event)">
+                    <div class="upload-content">
+                        <div class="upload-icon-3d">
+                            <div class="upload-icon-ring"></div>
+                            <i data-lucide="upload-cloud" class="upload-icon"></i>
+                        </div>
+                        <p class="upload-text-primary">Drag & drop your CSV or Excel file here</p>
+                        <p class="upload-text-secondary">or click to browse from files</p>
+                        <p class="upload-formats">Supported files: .csv, .xlsx, .xls</p>
+                    </div>
+                </div>
+
+                <!-- Selected File Metadata Details (Hidden Initially) -->
+                <div class="file-details-card hidden" id="file-details">
+                    <div class="file-info-header">
+                        <div class="file-meta">
+                            <i data-lucide="file-spreadsheet" class="excel-icon"></i>
+                            <div>
+                                <h4 id="details-filename">reviews_data.csv</h4>
+                                <span id="details-filesize">2.4 MB</span>
+                            </div>
+                        </div>
+                        <button class="remove-file-btn" onclick="clearSelectedFile()">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+
+                    <div class="column-selector-section">
+                        <label for="column-select" class="col-label">Select Review/Text Column</label>
+                        <div class="select-wrapper">
+                            <select id="column-select" class="col-select">
+                                <!-- Dynamically filled -->
+                            </select>
+                            <i data-lucide="chevron-down" class="select-arrow"></i>
+                        </div>
+                        <p class="input-helper">We auto-detected this column. Change it if you want to analyze a
+                            different column.</p>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="primary-btn glow-btn disabled" id="btn-analyze-batch" onclick="analyzeBatchFile()" disabled>
+                        <span class="btn-text">Process Dataset</span>
+                        <i data-lucide="play" class="btn-icon"></i>
+                        <span class="loader hidden"></span>
+                        <span class="btn-shine"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Batch Placeholder Card (Shown Initially) -->
+            <div class="glass-card placeholder-card" id="batch-placeholder">
+                <div class="placeholder-content">
+                    <div class="placeholder-icon-wrap">
+                        <i data-lucide="database-backup" class="placeholder-icon"></i>
+                    </div>
+                    <h3>Awaiting Dataset</h3>
+                    <p>No active processing dataset loaded. Drag & drop a CSV or Excel review file on the left to initialize batch verification metrics.</p>
+                </div>
+            </div>
+
+            <!-- Batch Results Dashboard (Hidden Initially) -->
+            <div class="batch-results-dashboard hidden" id="batch-results">
+                <!-- Stat Cards Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card tilt-card" style="--entrance-delay: 0s">
+                        <div class="stat-card-icon bg-blue">
+                            <i data-lucide="database"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Total Processed</span>
+                            <h3 class="stat-card-value count-up" id="stat-total">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card tilt-card" style="--entrance-delay: 0.1s">
+                        <div class="stat-card-icon bg-green">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Genuine Reviews</span>
+                            <h3 class="stat-card-value count-up" id="stat-genuine">0</h3>
+                            <span class="stat-card-percentage text-green" id="stat-genuine-pct">0%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card tilt-card" style="--entrance-delay: 0.2s">
+                        <div class="stat-card-icon bg-red">
+                            <i data-lucide="shield-alert"></i>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Deceptive Reviews</span>
+                            <h3 class="stat-card-value count-up" id="stat-deceptive">0</h3>
+                            <span class="stat-card-percentage text-red" id="stat-deceptive-pct">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Charts & Breakdown Details -->
+                <div class="dashboard-visuals">
+                    <div class="glass-card chart-card tilt-card">
+                        <div class="card-shimmer"></div>
+                        <h3>Distribution Analysis</h3>
+                        <div class="chart-container">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card download-action-card tilt-card">
+                        <div class="card-shimmer"></div>
+                        <div class="success-pulse-ring">
+                            <i data-lucide="file-check" class="success-doc-icon"></i>
+                        </div>
+                        <h3>Processing Complete!</h3>
+                        <p>We've added <code>prediction</code> and <code>confidence</code> columns to your original dataset.</p>
+                        <button class="download-btn glow-btn" id="btn-download-results" onclick="downloadProcessedResults()">
+                            <i data-lucide="download"></i> Download Predicted File
+                            <span class="btn-shine"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Batch Table Results Preview -->
+                <div class="glass-card table-card tilt-card">
+                    <div class="card-shimmer"></div>
+                    <div class="table-header">
+                        <h3>Sample Predictions Preview</h3>
+                        <span class="table-subtitle">(Showing first 100 rows)</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">Index</th>
+                                    <th>Review Snippet</th>
+                                    <th style="width: 140px;">Verdict</th>
+                                    <th style="width: 160px;">Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2026 Botshield AI. All rights reserved. Powered by Natural Language Processing.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+
+</html>
