@@ -1,4 +1,4 @@
-# Fake Review Detection System
+# Fake Hotel Review Detection System
 
 A modern Flask-based web application and machine learning system that detects whether hotel reviews are **truthful** or **deceptive**. 
 
